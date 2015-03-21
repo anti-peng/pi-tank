@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,minimum-scale=1,maximum-scale=1">
+	<title>PI - TANK</title>
+
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/index.css">
+
+	<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+
+</head>
+ 
+<body>
+
+	<div class="container">
+
+		<div class="header">
+			<nav>
+				<ul class="nav nav-pills pull-right">
+					<!-- <li role="presentation" class="active"><a href="#">Home</a></li>
+					<li role="presentation"><a href="#">About</a></li>
+					<li role="presentation"><a href="#">Contact</a></li> -->
+				</ul>
+			</nav>
+			<h4 class="text-muted">
+				RaspberryPi Tank
+				<button class="btn btn-danger" data-role="on" data-power>
+					<span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+				</button>
+			</h4>
+		</div>
+
+		<div class="jumbotron">
+			<!-- <h1>Control Pad</h1> -->
+			<!-- <p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p> -->
+			<!-- <p><a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p> -->
+			<table class="table">
+				<tr>
+					<td></td>
+					<td>
+						<button class="btn btn-primary btn-sm" data-role="forward" data-dir>
+							<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+						</button>
+					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>
+						<button class="btn btn-primary btn-sm" data-role="left" data-dir>
+							<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+						</button>
+					</td>
+					<td>
+						<button class="btn btn-default btn-sm" data-role="stop">
+							<span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+						</button>
+					</td>
+					<td>
+						<button class="btn btn-primary btn-sm" data-role="right" data-dir>
+							<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<button class="btn btn-primary btn-sm" data-role="backward" data-dir>
+							<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+						</button>
+					</td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+		<!-- <div class="row marketing">
+			<div class="col-lg-6">
+				<button class="btn btn-primary" data-role="on">
+					<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+				</button>
+				<button class="btn btn-primary" data-role="off">
+					<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+				</button>
+			</div>
+		</div> -->
+
+		<!-- footer -->
+		<footer class="footer"></footer>
+
+	</div> <!-- /container -->
+
+	
+	<script type="text/javascript">
+
+        var forward 	= $("[data-role='forward']");
+        var backward 	= $("[data-role='backward']");
+        var left 		= $("[data-role='left']");
+        var right 		= $("[data-role='right']");
+        var wardBtns 	= [forward, backward, left, right];
+
+        var stop 		= $("[data-role='stop']");
+
+        stop.attr('disabled', 'disabled');
+        wardBtns.forEach(function(e){
+            e.attr('disabled', 'disabled');
+        })
+
+        // power on & off
+        $("[data-power]").click(function(){
+        	var btn = $(this);
+        	var role = btn.data('role');
+        	$.ajax({
+        		url: '/' + role,
+        		type: 'GET',
+        		success: function(){
+                    if(role == 'on'){
+                        btn.removeClass('btn-danger').addClass('btn-success');
+                        role = 'off';
+                        wardBtns.forEach(function(e){
+                            e.removeAttr('disabled');
+                        });
+                        stop.removeAttr('disabled');
+                    } else {
+                        btn.removeClass('btn-success').addClass('btn-danger');
+                        role = 'on';
+                        wardBtns.forEach(function(e){
+                            e.attr('disabled', 'disabled');
+                            e.removeClass('btn-success').removeClass('btn-warning').addClass('btn-primary');
+                        });
+                        stop.attr('disabled', 'disabled');
+                    }
+                    btn.data('role', role);
+        		}
+        	});
+        });
+
+        // 停止
+        stop.click(function(){
+            // remove btn-primary
+            wardBtns.forEach(function(b){
+                b.removeClass('btn-success').removeClass('btn-warning').addClass('btn-primary');
+            });
+            $.ajax({
+               url: '/stop', 
+               type: 'GET', 
+               success: function(){}, 
+               error: function(){}
+            });
+        });
+
+        // 方向控制
+		$("[data-dir]").click(function(){
+			// remove btn-primary
+			wardBtns.forEach(function(b){
+				b.removeClass('btn-success').removeClass('btn-warning').addClass('btn-primary');
+			})
+			var btn = $(this);
+			var role = btn.data('role');
+			$.ajax({
+				url: '/' + role,
+				type: 'GET',
+				success: function(data, status){
+					btn.removeClass('btn-primary').addClass('btn-success');
+				},
+                error: function(err){
+                	console.log(err);
+                    btn.removeClass('btn-primary').removeClass('btn-success').addClass('btn-warning');
+                }
+			});
+		});
+	</script>
+
+</body>
+</html>
