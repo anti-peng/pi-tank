@@ -1,5 +1,4 @@
 var async 	= require('async');
-var config 	= require('../config');
 var gpio 	= require('pi-gpio');
 
 var pins = [11, 12, 15, 16];
@@ -44,7 +43,7 @@ module.exports = function(app){
 			res.json(null);
 		})
 	});
-
+	
 	/* power off */
 	app.get('/off', function(req, res){
 		tankGo(stop, function(err){

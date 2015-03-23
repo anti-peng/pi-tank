@@ -1,7 +1,6 @@
 var express     = require('express');
 var routes      = require('./routes');
 var http        = require('http');
-var config 		= require('./config');
 var gpio 		= require('pi-gpio');
 var async 		= require('async');
 var path 		= require('path');
