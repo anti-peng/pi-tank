@@ -40,16 +40,19 @@ module.exports = function(app){
 	/* power up */
 	app.get('/on', function(req, res){
 		openPins(pins, 'out', function(err){
-			if(err) throw err;
+			if(err) console.log(err);
 			res.json(null);
 		})
 	});
 
 	/* power off */
 	app.get('/off', function(req, res){
-		closePins(pins, function(err){
-			if(err) throw err;
-			res.json(null);
+		tankGo(stop, function(err){
+			if(err) console.log(err);
+			closePins(pins, function(err){
+				if(err) throw err;
+				res.json(null);
+			})	
 		})
 	});	
 

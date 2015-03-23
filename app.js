@@ -26,11 +26,25 @@ routes(app);
 
 // gpio init (close all pins)
 var pins = [11, 12, 15, 16];
-async.each(pins, function(pin, cb){
-	gpio.close(pin, cb);
-}, function(){
-	console.log('-- init gpio pins --');
-})
+closePins(pins, function(){
+	console.log('-- done init all pins --');
+});
+
+// SIGINT
+process.on('SIGINT', function(){
+	closePins(pins, function(){
+		console.log('-- all pins closed --');
+		console.log('-- process exit --');
+		process.exit(0);
+	});
+});
+
+function closePins(pins, callback){
+	// ignore errors
+	async.each(pins, function(pin, cb){
+		gpio.close(pin, cb);
+	}, callback);	
+}
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('-- Express server listening on port ' + app.get('port') + ' --');
